@@ -1,0 +1,39 @@
+.data-block-icon {
+    width: 80px; /* Icon size */
+    height: 80px; /* Icon size */
+    background-color: #F0F0F0; /* Light gray background for modern look */
+    border-radius: 12px; /* Rounded corners for a sleek, modern look */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    border: 2px solid #cccccc; /* Light border for a polished look */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column; /* Ensures the image is displayed at the top */
+    transition: transform 0.3s ease; /* Smooth transitions for hover/drag effects */
+    overflow: hidden; /* Ensures content stays inside the box */
+}
+
+.data-block-icon img {
+    width: 100%; /* Image takes full width of the block */
+    height: auto; /* Preserve aspect ratio */
+    object-fit: cover; /* Ensures the image covers the available space */
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    pointer-events: none; /* Prevents dragging and mouse events on the image */
+}
+
+.data-block-icon {
+    user-select: none; /* Prevents text/image selection */
+}
+
+.data-block-icon:hover {
+    transform: scale(1.05); /* Slight zoom effect on hover */
+}
+
+.data-block-icon::before {
+    content: ''; /* Placeholder for any potential internal design */
+    width: 40px;
+    height: 40px;
+    background-color: #ffffff; /* Inner content box */
+    border-radius: 6px; /* Rounded inner box */
+}

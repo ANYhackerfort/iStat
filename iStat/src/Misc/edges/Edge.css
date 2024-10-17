@@ -1,0 +1,16 @@
+.line-svg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: visible; /* Ensure the path isn't cut off */
+    pointer-events: none; /* Make sure it doesn't interfere with clicks */
+    z-index: 0; /* Set z-index below the nodes */
+  }
+  
+  .line-path {
+    stroke: black; /* Line color */
+    stroke-width: 2px; /* Line thickness */
+    fill: none; /* No fill inside the path */
+    stroke-linecap: round; /* Make the ends of the line rounded */
+    stroke-dasharray: 5, 5; /* Optional: Dash pattern for a modern style */
+  }

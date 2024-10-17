@@ -1,0 +1,68 @@
+/* MasterNode.css */
+.master-node {
+    position: absolute;
+    width: 200px;
+    height: 150px;
+    background-color: #FFCF9D; /* Light gray background */
+    border-radius: 12px; /* Rounded corners */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transform */
+    z-index: 1; /* Set z-index below the nodes */
+
+}
+
+.master-node.selected {
+    transform: scale(1.05); /* Pop-out effect */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); /* Larger shadow when selected */
+}
+
+/* Input and output styles */
+.inputsWrapper {
+    position: absolute;
+    top: 50%;
+    left: -24px;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.input {
+    width: 12px;
+    height: 12px;
+    border-radius: 100%;
+    background-color: #FFB000;
+    cursor: crosshair;
+    pointer-events: all;
+}
+
+.outputsWrapper {
+    position: absolute;
+    top: 0px;
+    right: -24px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 12px;
+    pointer-events: none;
+}
+
+.output {
+    width: 12px;
+    height: 12px;
+    border-radius: 100%;
+    background-color: #FFB000;
+    cursor: crosshair;
+    pointer-events: all;
+}
+
+.hidden {
+    display: none;
+}

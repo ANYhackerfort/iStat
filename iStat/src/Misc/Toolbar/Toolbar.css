@@ -1,0 +1,92 @@
+/* Include Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+/* Toolbar container */
+.toolbar {
+    top: 5%; /* 5% from the top of the viewport */
+    bottom: 5%; /* 5% from the bottom of the viewport */
+    position: fixed;
+    display: absolute;
+    padding: 12px;
+    background-color: #005A33; /* Slightly lighter shade of #004225 */
+    border: none;
+    border-radius: 0 12px 12px 0; /* Pointed top-left and bottom-left corners, rounded right corners */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow for a modern look */
+    z-index: 999; /* Ensure it stays on top */
+    transition: transform 0.3s ease, opacity 0.3s ease; /* Smooth transitions */
+    
+    width: 12vw; /* 12% of the viewport width */
+    font-family: 'Roboto', sans-serif; /* Modern font */
+    outline: none;
+}
+
+.toolbar-btn {
+    position: absolute;
+    top: 0; /* Place it at the very top */
+    left: 25%;
+    transform: translateX(-50%); /* Center the button horizontally */
+    margin: 0; /* Remove margin */
+    background-color: #006847; /* Lighter shade */
+    color: white;
+    border: none;
+    border-radius: 0px; /* No rounding for this button */
+    cursor: grab;
+    width: 50%;  /* Set the button width to 50% of the toolbar width */
+    
+    /* Center the text */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    /* Scalable text size */
+    font-size: 1.2vw; /* Scale text size based on the viewport width */
+    font-family: 'Roboto', sans-serif; /* Modern font */
+    outline: none;
+}
+
+.toolbar-btn-right {
+    position: absolute;
+    top: 0; /* Place it at the very top */
+    left: 75%;
+    width: 50%;  /* Set the button width to 50% of the toolbar width */
+    transform: translateX(-50%); /* Center the button horizontally */
+    margin: 0; /* Remove margin */
+    background-color: #006847; /* Same color as the toolbar */
+    color: white;
+    border: none;
+    border-radius: 0 12px 0 0; /* Only round the top-right corner */
+    cursor: grab;
+    
+    /* Center the text */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    /* Scalable text size */
+    font-size: 1.2vw; /* Scale text size based on the viewport width */
+    font-family: 'Roboto', sans-serif; /* Modern font */
+}
+
+/* Hover effect */
+.toolbar-btn:hover, .toolbar-btn-right:hover {
+    background-color: #005A33; 
+}
+
+.toolbar-btn-right-clicked {
+    background-color: #005A33; 
+}
+
+.toolbar-btn-clicked {
+    background-color: #005A33; 
+}
+
+.main-block-container {
+    margin-top: 20%; /* Adds a 5% margin from the top of the parent */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Auto-scale based on window size */
+    gap: 20px; /* Space between each block */
+    justify-items: center;
+    padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
