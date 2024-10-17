@@ -9,7 +9,7 @@
 - **Custom Axioms**: Ensures consistency and accuracy throughout the analysis, with built-in rules to maintain statistical integrity.
 - **Optimized UI**: A highly intuitive, responsive interface built with TypeScript, React, designed for smooth performance across all screen sizes and touch devices.
 
-More advanced features and enhancements are planned for future iterations to expand iStat’s capabilities. Join the iStat community today and transform how you approach data analysis!
+More advanced features and enhancements are coming for very-near future iterations to expand iStat’s capabilities. Join the iStat community today and transform how you approach data analysis!
 
 ### How to Run This on Your Computer
 
