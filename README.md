@@ -31,22 +31,16 @@ Follow these steps to run iStat locally:
     npm install
     ```
 
-4. **Run the development server**:
-    Start the development server with the following command:
+4. **Build for production**:
+    To build the project for production, use:
     ```bash
-    npm start
+    npm run dev
     ```
 
 5. **Open the application**:
-    Open your browser and navigate to:
-    ```
-    http://localhost:3000
-    ```
-
-6. **Build for production**:
-    To build the project for production, use:
-    ```bash
-    npm run build
-    ```
+Open your browser and navigate to:
+```
+http://localhost:3000
+```
 
    That's basically it for the frontend running on your computer :)! 
