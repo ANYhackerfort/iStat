@@ -13,10 +13,17 @@ const MainBlockIcon: React.FC<MainBlockIconProps> = ({ imageSrc, id, handleMouse
         handleMouseDownIcon(id, event);
     };
 
+    const onDragStart = (event: React.DragEvent<HTMLImageElement>) => {
+        event.preventDefault(); // Disable dragging the image
+    };
+
     return (
-        <div className="data-block-icon" onMouseDown={onMouseDown}>
-            {imageSrc && <img src={imageSrc} alt="Icon" className="data-block-icon-image" />}
+        <div>
+            <div className="data-block-icon" onMouseDown={onMouseDown}>
+                {imageSrc && <img src={imageSrc} alt="Icon" className="data-block-icon-image" onDragStart={onDragStart} />}
+            </div>
         </div>
+        
     );
 };
 

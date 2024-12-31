@@ -24,7 +24,8 @@ interface MasterNodeProps {
   updateNodePlace: (id: number, changeX: number, changeY: number) => void;
   neighbors: Nodes[]; 
   handleMouseDownOutput: (id: number, outputIndex: number, numberOutputs: number, event: React.MouseEvent) => void;
-  handleMouseEnterInput: (id: number, inputIndex: number, numberInputs: number, event: React.MouseEvent) => void; 
+  handleMouseEnterInput?: (id: number, inputIndex: number, numberInputs: number, event: React.MouseEvent) => void; 
+  dragAndDrop?: boolean; // Enable drag-and-drop feature for the node
 }
 
 const MasterNode: React.FC<MasterNodeProps> = ({ 
@@ -38,7 +39,8 @@ const MasterNode: React.FC<MasterNodeProps> = ({
   updateNodePlace, 
   neighbors, 
   handleMouseDownOutput, 
-  handleMouseEnterInput 
+  handleMouseEnterInput, 
+  dragAndDrop = false 
 }) => {
 
   const [positionNode, setPositionNode] = useState({ xPos: x, yPos: y });
@@ -46,14 +48,31 @@ const MasterNode: React.FC<MasterNodeProps> = ({
   const isDragging = useRef(false);
   const stepPosition = useRef({ XPos: 0, YPos: 0 });
   const [hide, setHide] = useState<boolean>(false);
+  const [fileName, setFileName] = useState<string | null>(null);
 
-  const inputs = Array.from({ length: numberInputs }, (_, index) => (
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    if (!dragAndDrop) return;
+    event.preventDefault();
+  };
+
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    if (!dragAndDrop) return;
+    event.preventDefault();
+    const file = event.dataTransfer.files[0];
+    if (file) {
+      setFileName(file.name);
+    }
+  };
+
+  const inputs = numberInputs > 0 && Array.from({ length: numberInputs }, (_, index) => (
     <div 
       key={index} 
       className="input"
       onMouseEnter={(event) => {
-        event.stopPropagation(); 
-        handleMouseEnterInput(id, index, numberInputs, event); 
+        if (handleMouseEnterInput) {
+          event.stopPropagation(); 
+          handleMouseEnterInput(id, index, numberInputs, event); 
+        }
       }} 
     ></div>
   ));
@@ -71,7 +90,7 @@ const MasterNode: React.FC<MasterNodeProps> = ({
 
   const handleMouseDown = (event: React.MouseEvent) => {
     if (event.button !== 0) return;
-    console.log("position of node", positionNode.xPos, positionNode.yPos)
+
     isDragging.current = true;
     stepPosition.current.XPos = event.clientX;
     stepPosition.current.YPos = event.clientY;
@@ -100,7 +119,6 @@ const MasterNode: React.FC<MasterNodeProps> = ({
     };
 
     const handleMouseUp = () => {
-        
       if (isDragging.current) {
         isDragging.current = false;
         updateNodePlace(id, positionNodeRef.current.xPos, positionNodeRef.current.yPos);
@@ -124,14 +142,28 @@ const MasterNode: React.FC<MasterNodeProps> = ({
         className={`master-node ${selected ? 'selected' : ''} ${hide ? 'hidden' : ''}`}
         style={{ transform: `translate(${positionNode.xPos}px, ${positionNode.yPos}px)` }}
         onMouseDown={handleMouseDown} 
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
       >
-        <div className="inputsWrapper">
-          {inputs}
-        </div>
-
-        <div className="outputsWrapper">
-          {outputs}
-        </div>
+        {dragAndDrop ? (
+          <>
+            <div className="inputsWrapper">{inputs}</div>
+            <div className="outputsWrapper">{outputs}</div>
+            <div className="drag-area">
+              {fileName ? (
+                <p>{fileName}</p>
+              ) : (
+                <p>Drag and drop a file here</p>
+              )}
+            </div>
+          </>
+          
+        ) : (
+          <>
+            <div className="inputsWrapper">{inputs}</div>
+            <div className="outputsWrapper">{outputs}</div>
+          </>
+        )}
       </div>
     </div>
   );

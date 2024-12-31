@@ -19,6 +19,7 @@ interface Nodes {
   y: number;
   selected: boolean;
   neighbors: Nodes[]; // Refers to the same Nodes interface (outputs)
+  dragAndDrop: boolean;
 }
 
 const HomePage: React.FC = () => {
@@ -46,6 +47,7 @@ const HomePage: React.FC = () => {
   };
 
   const handleNodeIconClicked = (id: string) => {
+    console.log(id)
     setNodeType(id);
   };
 
@@ -108,39 +110,57 @@ const HomePage: React.FC = () => {
       positionY: event.clientY,
     };
   };
-
   const addNode = (type: string, x: number, y: number) => {
     count.current += 1;
-    const newNode: Nodes = {
-      id: count.current,
-      type: type,
-      numberInputs: 2,
-      numberOutputs: 1,
-      x: x - 100,
-      y: y - 80,
-      selected: false,
-      neighbors: [],
-    };
+    let newNode: Nodes;
+    console.log(type)
+    if (type === 'data-block-1') {
+        newNode = {
+            id: count.current,
+            type: type,
+            numberInputs: 0, 
+            numberOutputs: 1,
+            x: x - 100,
+            y: y - 80,
+            selected: false,
+            dragAndDrop: true, 
+            neighbors: [],
+        };
+    } else {
+        newNode = {
+            id: count.current,
+            type: type,
+            numberInputs: 2, 
+            numberOutputs: 1, 
+            x: x - 100,
+            y: y - 80,
+            selected: false,
+            dragAndDrop: false,
+            neighbors: [],
+        };
+    }
 
+    // Add the newNode to the nodes state
     setNodes((prevNodes) => ({
-      ...prevNodes,
-      [newNode.id]: newNode,
+        ...prevNodes,
+        [newNode.id]: newNode,
     }));
 
     setNodeType(null);
   };
 
   const updateConnectionNodes = (changeX: number, changeY: number) => {
+    console.log(changeX, changeY)
     lineUpdate.current.changeX = changeX;
     lineUpdate.current.changeY = changeY; 
   }
 
   const handleMouseUp = (event: MouseEvent) => {
     if (event.button !== 0) return;
-    const outputEdgeId = nodeOfOutputEdge.current; //these are the id of the nodes，we want to log how many inputs and outputs there are. 
-    const inputEdgeId = nodeOfInputEdge.current;
-
-    if (inputEdgeId !== 0 && outputEdgeId !== 0) {
+    const outputEdgeNodeID = nodeOfOutputEdge.current; //these are the id of the nodes，we want to log how many inputs and outputs there are. 
+    const inputEdgeNodeID = nodeOfInputEdge.current;
+    console.log(outputEdgeNodeID, inputEdgeNodeID)
+    if (outputEdgeNodeID !== 0 && inputEdgeNodeID !== 0) {
       setNodes((prevNodes) => {
         const updatedNodes = { ...prevNodes };
           setLines((prevLines) => {
@@ -155,37 +175,53 @@ const HomePage: React.FC = () => {
   
             const updatedLines = [...prevLines];
             
-            const numOutputs = updatedNodes[outputEdgeId].numberOutputs; 
-            const numInputs =  updatedNodes[outputEdgeId].numberInputs; 
-            const totalNum = numOutputs + numInputs; 
-            
-            if (!updatedLines[outputEdgeId - 1]) {
-              updatedLines[outputEdgeId - 1] = new Array(totalNum).fill(null);
-            }
-            if (!updatedLines[inputEdgeId - 1]) {
-              updatedLines[inputEdgeId - 1] = new Array(totalNum).fill(null);
-            }
-            console.log(outputEdgeId - 1, outputEdgeId - 1)
-            console.log(updatedLines[outputEdgeId - 1][outputsNumber.current], updatedLines[inputEdgeId - 1][inputsNumber.current])
-            if (updatedLines[outputEdgeId - 1][outputsNumber.current] === null && updatedLines[inputEdgeId - 1][numOutputs + inputsNumber.current] === null) { //ouputs appear first, inputs appear second 
-              updatedLines[outputEdgeId - 1][outputsNumber.current] = { start, end, type: true };
-              updatedLines[inputEdgeId - 1][numOutputs + inputsNumber.current] = {start, end, type: false };
-            } 
+            const numOutputsOutput = updatedNodes[outputEdgeNodeID].numberOutputs; 
+            const numInputsOutput =  updatedNodes[outputEdgeNodeID].numberInputs; 
 
+            const numOutputsInput = updatedNodes[inputEdgeNodeID].numberOutputs; 
+            const numInputsInput =  updatedNodes[inputEdgeNodeID].numberInputs; 
+
+            const totalNumOuput = numOutputsOutput + numInputsOutput; 
+            const totalNumInput = numOutputsInput + numInputsInput; 
+
+            if (!updatedLines[outputEdgeNodeID - 1]) {
+              updatedLines[outputEdgeNodeID - 1] = new Array(totalNumOuput).fill(null);
+            }
+            if (!updatedLines[inputEdgeNodeID - 1]) {
+              updatedLines[inputEdgeNodeID - 1] = new Array(totalNumInput).fill(null);
+            }
+            console.log("the totalnuminput is", numOutputsInput, "the inputs number is", inputsNumber.current)
+            console.log(updatedLines[outputEdgeNodeID - 1][outputsNumber.current], "199")
+            if (updatedLines[outputEdgeNodeID - 1][outputsNumber.current] === null && updatedLines[inputEdgeNodeID - 1][numOutputsInput + inputsNumber.current - 1] === null) { //ouputs appear first, inputs appear second 
+              updatedLines[outputEdgeNodeID - 1][outputsNumber.current] = { start, end, type: true };
+              updatedLines[inputEdgeNodeID - 1][numOutputsInput + inputsNumber.current - 1] = {start, end, type: false };
+            } 
             return updatedLines;
           });
 
-        if (updatedNodes[outputEdgeId]) {
-          const updatedNeighbors = [
-            ...updatedNodes[outputEdgeId].neighbors,
-            updatedNodes[inputEdgeId],
-          ];
-
-          updatedNodes[outputEdgeId] = {
-            ...updatedNodes[outputEdgeId],
-            neighbors: updatedNeighbors,
-          };
-        }
+          if (updatedNodes[outputEdgeNodeID]) {
+            // Update neighbors for outputEdgeNodeID
+            const updatedOutputNeighbors = [
+              ...updatedNodes[outputEdgeNodeID].neighbors,
+              updatedNodes[inputEdgeNodeID],
+            ];
+            updatedNodes[outputEdgeNodeID] = {
+              ...updatedNodes[outputEdgeNodeID],
+              neighbors: updatedOutputNeighbors,
+            };
+          
+            // Update neighbors for inputEdgeNodeID
+            if (updatedNodes[inputEdgeNodeID]) {
+              const updatedInputNeighbors = [
+                ...updatedNodes[inputEdgeNodeID].neighbors,
+                updatedNodes[outputEdgeNodeID],
+              ];
+              updatedNodes[inputEdgeNodeID] = {
+                ...updatedNodes[inputEdgeNodeID],
+                neighbors: updatedInputNeighbors,
+              };
+            }
+          }          
 
         return updatedNodes;
       });
@@ -220,6 +256,7 @@ const HomePage: React.FC = () => {
             handleMouseDownOutput={handleMouseDownOutput}
             handleMouseEnterInput={handleMouseEnterInput}
             neighbors={node.neighbors}
+            dragAndDrop={node.dragAndDrop}
           />
         ))}
         {lines.map((nodeLines, nodeIndex) => (

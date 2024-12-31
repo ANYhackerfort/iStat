@@ -39,6 +39,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ nodeIconClicked }) => {
             onClick={stopPropagation}
             onDrag={stopPropagation}
             onMouseDown={stopPropagation}
+            onWheel={stopPropagation}
         >
             <button 
                 className={`toolbar-btn ${nodePageClicked ? 'toolbar-btn-clicked' : ''}`} 
@@ -56,8 +57,13 @@ const Toolbar: React.FC<ToolbarProps> = ({ nodeIconClicked }) => {
 
             <div className="main-block-container">
                 <MainBlockIcon 
-                    imageSrc='/vite.svg' 
+                    imageSrc='/file.svg' 
                     id="data-block-1"
+                    handleMouseDownIcon={handleMouseDownIcon} // Pass the handler for mouse down event
+                />
+                <MainBlockIcon 
+                    imageSrc='/file.svg' 
+                    id="data-cleaning-block-1"
                     handleMouseDownIcon={handleMouseDownIcon} // Pass the handler for mouse down event
                 />
             </div>

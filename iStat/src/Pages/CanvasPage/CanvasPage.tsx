@@ -71,6 +71,7 @@ const Canvas: React.FC<CanvasProps> = ({ children, nodeType, addToCanvas, update
 
             if (nodeType !== null && canvasElement) {
                 setGhostPosition({ ghostX: event.clientY, ghostY: event.clientX });
+                console.log(event.clientY, event.clientX)
                 return; 
             }
 

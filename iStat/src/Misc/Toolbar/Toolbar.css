@@ -5,7 +5,7 @@
 .toolbar {
     top: 5%; /* 5% from the top of the viewport */
     bottom: 5%; /* 5% from the bottom of the viewport */
-    position: fixed;
+    position: absolute;
     display: absolute;
     padding: 12px;
     background-color: #005A33; /* Slightly lighter shade of #004225 */
@@ -81,12 +81,15 @@
 }
 
 .main-block-container {
-    margin-top: 20%; /* Adds a 5% margin from the top of the parent */
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Auto-scale based on window size */
-    gap: 20px; /* Space between each block */
-    justify-items: center;
-    padding: 20px;
-    width: 100%;
-    box-sizing: border-box;
+    position: relative;
+    margin-top: 22%; /* Space between the container and its parent */
+    display: grid; /* Grid layout for flexible arrangement */
+    width: 100%; /* Full width for responsiveness */
+    height: 92.5%; /* Full height for responsiveness */
+    overflow-y: auto; /* Enable vertical scrolling */
+}
+
+
+.main-block-container::-webkit-scrollbar {
+    display: none; /* Completely hides the scrollbar */
 }
