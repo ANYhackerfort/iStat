@@ -3,7 +3,7 @@
     position: absolute;
     width: 200px;
     height: 150px;
-    background-color: #FFCF9D; /* Light gray background */
+    background-color: #00ADB5; /* Light gray background */
     border-radius: 12px; /* Rounded corners */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
     display: flex;
@@ -12,7 +12,6 @@
     justify-content: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transform */
     z-index: 1; /* Set z-index below the nodes */
-
 }
 
 .master-node.selected {
@@ -35,7 +34,7 @@
     width: 12px;
     height: 12px;
     border-radius: 100%;
-    background-color: #FFB000;
+    background-color: #EEEEEE;
     cursor: crosshair;
     pointer-events: all;
 }
@@ -51,14 +50,14 @@
     justify-content: center;
     gap: 12px;
     width: 12px;
-    pointer-events: none;
+    /* pointer-events: none; */
 }
 
 .output {
     width: 12px;
     height: 12px;
     border-radius: 100%;
-    background-color: #FFB000;
+    background-color: #EEEEEE;
     cursor: crosshair;
     pointer-events: all;
 }
@@ -70,18 +69,18 @@
 .drag-area {
     width: 90%;
     height: 60%;
-    background-color: #e0e0e0;
-    border: 2px dashed #ccc;
+    background-color: #00ADB5;
+    border: 2px dashed #EEEEEE;
     border-radius: 8px;
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
     font-size: 14px;
-    color: #666;
+    color: #EEEEEE;
     user-select: none; /* Prevent text selection */
 }
 
 .drag-area span {
-    pointer-events: none;
+    /* pointer-events: none; */
 }

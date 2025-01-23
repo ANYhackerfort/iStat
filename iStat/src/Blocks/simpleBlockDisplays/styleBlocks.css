@@ -1,0 +1,19 @@
+.csv-download button {
+    background-color: #00ADB5; /* Background color */
+    color: white; /* Text color */
+    padding: 10px 15px; /* Padding */
+    border: 2px solid white; /* Modern white border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor */
+    z-index: 1005; /* Ensure proper stacking */
+    pointer-events: auto; /* Allow interactions */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    transition: all 0.3s ease; /* Smooth transitions for hover */
+  }
+
+  .csv-download button:hover {
+    background-color: #00d1d7; /* Slightly lighter shade on hover */
+    border-color: #ffffff; /* Keep white border */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2); /* Slightly deeper shadow */
+    transform: scale(1.05); /* Slight zoom-in effect */
+  }

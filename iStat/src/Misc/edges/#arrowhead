@@ -1,0 +1,22 @@
+<svg width="500" height="500" xmlns="http://www.w3.org/2000/svg">
+  <!-- Define the marker -->
+  <defs>
+    <marker
+      id="arrowhead"
+      markerWidth="10"
+      markerHeight="7"
+      refX="10"
+      refY="3.5"
+      orient="auto"
+      markerUnits="strokeWidth"
+    >
+      <polygon points="0 0, 10 3.5, 0 7" fill="#EEEEEE" />
+    </marker>
+  </defs>
+
+  <!-- Line path with arrow -->
+  <path
+    d="M 50 50 L 450 450"
+    class="line-path"
+  />
+</svg>

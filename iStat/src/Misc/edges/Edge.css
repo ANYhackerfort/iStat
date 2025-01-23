@@ -8,7 +8,7 @@
   }
   
   .line-path {
-    stroke: black; /* Line color */
+    stroke: #EEEEEE; /* Line color */
     stroke-width: 2px; /* Line thickness */
     fill: none; /* No fill inside the path */
     stroke-linecap: round; /* Make the ends of the line rounded */

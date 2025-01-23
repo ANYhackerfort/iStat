@@ -2,28 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import './Toolbar.css';
 import DataBlockIcon from '../../Blocks/DataBlock/DatablockIcon';
 import MainBlockIcon from '../../Blocks/MainIcon';
+import Dropdown from './dropdownmenu';
 
 interface ToolbarProps {
     nodeIconClicked: (type: string) => void;  // Expecting a function to add a node of a certain type
 }
 
 const Toolbar: React.FC<ToolbarProps> = ({ nodeIconClicked }) => {
-    const [nodePageClicked, setNodePageClicked] = useState(true);  
-    const [dataPageClicked, setDataPageClicked] = useState(false);  
-
-    const showNodePage = () => {
-        if (!nodePageClicked) {
-            setNodePageClicked(true); 
-            setDataPageClicked(false); 
-        }
-    };
-
-    const showDataPage = () => {
-        if (!dataPageClicked) {
-            setNodePageClicked(false); 
-            setDataPageClicked(true); 
-        }
-    };
+    const [isOpen, setIsOpen] = useState(false);
     
     const stopPropagation = (event: React.MouseEvent | React.TouchEvent | React.DragEvent) => {
         event.stopPropagation();
@@ -41,33 +27,76 @@ const Toolbar: React.FC<ToolbarProps> = ({ nodeIconClicked }) => {
             onMouseDown={stopPropagation}
             onWheel={stopPropagation}
         >
-            <button 
-                className={`toolbar-btn ${nodePageClicked ? 'toolbar-btn-clicked' : ''}`} 
-                onClick={showNodePage}
-            >
-                Nodes
-            </button>
-
-            <button 
-                className={`toolbar-btn-right ${dataPageClicked ? 'toolbar-btn-right-clicked' : ''}`} 
-                onClick={showDataPage}
-            >
-                Data
-            </button>
-
-            <div className="main-block-container">
+            <Dropdown label=".Input"> 
                 <MainBlockIcon 
-                    imageSrc='/file.svg' 
-                    id="data-block-1"
+                    id="data-block-csv"
+                    text='.CSV File'
                     handleMouseDownIcon={handleMouseDownIcon} // Pass the handler for mouse down event
                 />
                 <MainBlockIcon 
-                    imageSrc='/file.svg' 
+                    id="data-block-excel"
+                    text='.Excel File'
+                    handleMouseDownIcon={handleMouseDownIcon} // Pass the handler for mouse down event
+                />
+            </Dropdown>
+
+            <Dropdown label=".Data Cleaning">
+                <MainBlockIcon 
+                    text='Remove NAs'
+                    id="data-cleaning-block-remove-null"
+                    handleMouseDownIcon={handleMouseDownIcon} // Pass the handler for mouse down event
+                />
+            </Dropdown>
+            
+
+            <Dropdown label=".Join Data">
+                <MainBlockIcon 
+                    text=''
                     id="data-cleaning-block-1"
                     handleMouseDownIcon={handleMouseDownIcon} // Pass the handler for mouse down event
                 />
-            </div>
-        </div>
+            </Dropdown>
+
+            <Dropdown label=".Simple Statistics">
+                <MainBlockIcon 
+                    text=''
+                    id="data-cleaning-block-1"
+                    handleMouseDownIcon={handleMouseDownIcon} // Pass the handler for mouse down event
+                />
+            </Dropdown>
+
+            <Dropdown label=".Significance Testings">
+                <MainBlockIcon 
+                    text=''
+                    id="data-cleaning-block-1"
+                    handleMouseDownIcon={handleMouseDownIcon} // Pass the handler for mouse down event
+                />
+            </Dropdown>
+
+            <Dropdown label=".Graphing">
+                <MainBlockIcon 
+                    text=''
+                    id="data-cleaning-block-1"
+                    handleMouseDownIcon={handleMouseDownIcon} // Pass the handler for mouse down event
+                />
+            </Dropdown>
+
+            <Dropdown label=".Ouput as File">
+                <MainBlockIcon 
+                    text='Download CSV'
+                    id="output-to-csv"
+                    handleMouseDownIcon={handleMouseDownIcon} // Pass the handler for mouse down event
+                />
+            </Dropdown>
+
+            <Dropdown label=".Correlation">
+                <MainBlockIcon 
+                    text=''
+                    id="data-cleaning-block-1"
+                    handleMouseDownIcon={handleMouseDownIcon} // Pass the handler for mouse down event
+                />
+            </Dropdown>
+    </div>
     );
 };
 

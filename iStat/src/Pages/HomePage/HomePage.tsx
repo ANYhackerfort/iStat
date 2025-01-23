@@ -3,6 +3,7 @@ import Canvas from '../CanvasPage/CanvasPage';
 import Toolbar from '../../Misc/Toolbar/Toolbar';
 import MasterNode from '../../Blocks/MasterBlock';
 import LineComponent from '../../Misc/edges/Edge';
+import NodeLoggerComponent from './NodeLogger';
 
 interface Lines {
   start: { x: number; y: number };
@@ -18,7 +19,8 @@ interface Nodes {
   x: number;
   y: number;
   selected: boolean;
-  neighbors: Nodes[]; // Refers to the same Nodes interface (outputs)
+  neighbors_dependent: Nodes[]; 
+  neighbors_pointing: Nodes[]; // nodes that depends on this one
   dragAndDrop: boolean;
 }
 
@@ -26,7 +28,6 @@ const HomePage: React.FC = () => {
   const [nodes, setNodes] = useState<{ [key: number]: Nodes }>({});
   const [lines, setLines] = useState<Lines[][]>([]);
   const [nodeType, setNodeType] = useState<string | null>(null);
-
 
   const selectedNode = useRef<number | null>(null);
   const count = useRef(0);
@@ -113,8 +114,8 @@ const HomePage: React.FC = () => {
   const addNode = (type: string, x: number, y: number) => {
     count.current += 1;
     let newNode: Nodes;
-    console.log(type)
-    if (type === 'data-block-1') {
+    console.log("The type is", type)
+    if (type === 'data-block-csv') {
         newNode = {
             id: count.current,
             type: type,
@@ -124,20 +125,35 @@ const HomePage: React.FC = () => {
             y: y - 80,
             selected: false,
             dragAndDrop: true, 
-            neighbors: [],
+            neighbors_dependent: [],
+            neighbors_pointing: [],
         };
-    } else {
+    } else if (type === 'data-cleaning-block-remove-null'){
         newNode = {
             id: count.current,
             type: type,
-            numberInputs: 2, 
+            numberInputs: 1, 
             numberOutputs: 1, 
             x: x - 100,
             y: y - 80,
             selected: false,
             dragAndDrop: false,
-            neighbors: [],
+            neighbors_dependent: [],
+            neighbors_pointing: [],
         };
+    } else if (type === 'output-to-csv'){
+      newNode = {
+        id: count.current,
+        type: type,
+        numberInputs: 1, 
+        numberOutputs: 0, 
+        x: x - 100,
+        y: y - 80,
+        selected: false,
+        dragAndDrop: false,
+        neighbors_dependent: [],
+        neighbors_pointing: [],
+      };
     }
 
     // Add the newNode to the nodes state
@@ -150,7 +166,6 @@ const HomePage: React.FC = () => {
   };
 
   const updateConnectionNodes = (changeX: number, changeY: number) => {
-    console.log(changeX, changeY)
     lineUpdate.current.changeX = changeX;
     lineUpdate.current.changeY = changeY; 
   }
@@ -160,6 +175,7 @@ const HomePage: React.FC = () => {
     const outputEdgeNodeID = nodeOfOutputEdge.current; //these are the id of the nodes，we want to log how many inputs and outputs there are. 
     const inputEdgeNodeID = nodeOfInputEdge.current;
     console.log(outputEdgeNodeID, inputEdgeNodeID)
+
     if (outputEdgeNodeID !== 0 && inputEdgeNodeID !== 0) {
       setNodes((prevNodes) => {
         const updatedNodes = { ...prevNodes };
@@ -184,44 +200,33 @@ const HomePage: React.FC = () => {
             const totalNumOuput = numOutputsOutput + numInputsOutput; 
             const totalNumInput = numOutputsInput + numInputsInput; 
 
+
             if (!updatedLines[outputEdgeNodeID - 1]) {
-              updatedLines[outputEdgeNodeID - 1] = new Array(totalNumOuput).fill(null);
+              updatedLines[outputEdgeNodeID - 1] = new Array(totalNumOuput + 1).fill(null);
             }
             if (!updatedLines[inputEdgeNodeID - 1]) {
-              updatedLines[inputEdgeNodeID - 1] = new Array(totalNumInput).fill(null);
+              updatedLines[inputEdgeNodeID - 1] = new Array(totalNumInput + 1).fill(null);
             }
-            console.log("the totalnuminput is", numOutputsInput, "the inputs number is", inputsNumber.current)
-            console.log(updatedLines[outputEdgeNodeID - 1][outputsNumber.current], "199")
-            if (updatedLines[outputEdgeNodeID - 1][outputsNumber.current] === null && updatedLines[inputEdgeNodeID - 1][numOutputsInput + inputsNumber.current - 1] === null) { //ouputs appear first, inputs appear second 
+            if (updatedLines[outputEdgeNodeID - 1][outputsNumber.current] === null && updatedLines[inputEdgeNodeID - 1][numOutputsInput + inputsNumber.current] === null) { //ouputs appear first, inputs appear second 
               updatedLines[outputEdgeNodeID - 1][outputsNumber.current] = { start, end, type: true };
-              updatedLines[inputEdgeNodeID - 1][numOutputsInput + inputsNumber.current - 1] = {start, end, type: false };
+              updatedLines[inputEdgeNodeID - 1][numOutputsInput + inputsNumber.current] = {start, end, type: false };
+              console.log(updatedLines)
             } 
             return updatedLines;
           });
 
-          if (updatedNodes[outputEdgeNodeID]) {
-            // Update neighbors for outputEdgeNodeID
-            const updatedOutputNeighbors = [
-              ...updatedNodes[outputEdgeNodeID].neighbors,
-              updatedNodes[inputEdgeNodeID],
-            ];
-            updatedNodes[outputEdgeNodeID] = {
-              ...updatedNodes[outputEdgeNodeID],
-              neighbors: updatedOutputNeighbors,
-            };
+          const outputNode = updatedNodes[outputEdgeNodeID];
+          const inputNode = updatedNodes[inputEdgeNodeID];
           
-            // Update neighbors for inputEdgeNodeID
-            if (updatedNodes[inputEdgeNodeID]) {
-              const updatedInputNeighbors = [
-                ...updatedNodes[inputEdgeNodeID].neighbors,
-                updatedNodes[outputEdgeNodeID],
-              ];
-              updatedNodes[inputEdgeNodeID] = {
-                ...updatedNodes[inputEdgeNodeID],
-                neighbors: updatedInputNeighbors,
-              };
-            }
-          }          
+          if (!outputNode.neighbors_pointing.some((node) => node.id === inputNode.id)) {
+            outputNode.neighbors_pointing.push(inputNode);
+          }
+          if (!inputNode.neighbors_dependent.some((node) => node.id === outputNode.id)) {
+            inputNode.neighbors_dependent.push(outputNode);
+          }
+
+          console.log(outputNode)
+          console.log(inputNode)
 
         return updatedNodes;
       });
@@ -242,6 +247,7 @@ const HomePage: React.FC = () => {
     <div>
       <Toolbar nodeIconClicked={handleNodeIconClicked} />
       <Canvas nodeType={nodeType} addToCanvas={addNode} updateConnectionPositions={updateConnectionNodes}>
+        <NodeLoggerComponent nodes={nodes}/>
         {Object.values(nodes).map((node) => (
           <MasterNode
             key={node.id}
@@ -255,8 +261,8 @@ const HomePage: React.FC = () => {
             updateNodePlace={updateNodePlace}
             handleMouseDownOutput={handleMouseDownOutput}
             handleMouseEnterInput={handleMouseEnterInput}
-            neighbors={node.neighbors}
             dragAndDrop={node.dragAndDrop}
+            type={node.type}
           />
         ))}
         {lines.map((nodeLines, nodeIndex) => (
@@ -264,7 +270,7 @@ const HomePage: React.FC = () => {
             {nodeLines && nodeLines.map((line, lineIndex) => (
               line && line.start && line.end ? (
                 <LineComponent key={lineIndex} start={line.start} end={line.end} />
-              ) : null // Skip rendering if line is null or missing start/end
+              ) : null 
             ))}
           </div>
         ))}

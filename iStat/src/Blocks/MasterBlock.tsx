@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './MasterBlock.css';
 import Ghost from '../Misc/ghostObj.tsx/mainGhost';
+import CleanNaBlock from './simpleBlockDisplays/cleanNaBlock';
+import OutputToCsv from './simpleBlockDisplays/outputToCSV';
 
 interface Nodes {
   id: number;
@@ -22,10 +24,10 @@ interface MasterNodeProps {
   selected: boolean;
   handleNodeDown: (id: number, event: React.MouseEvent) => void;  
   updateNodePlace: (id: number, changeX: number, changeY: number) => void;
-  neighbors: Nodes[]; 
   handleMouseDownOutput: (id: number, outputIndex: number, numberOutputs: number, event: React.MouseEvent) => void;
   handleMouseEnterInput?: (id: number, inputIndex: number, numberInputs: number, event: React.MouseEvent) => void; 
   dragAndDrop?: boolean; // Enable drag-and-drop feature for the node
+  type: string;
 }
 
 const MasterNode: React.FC<MasterNodeProps> = ({ 
@@ -37,10 +39,10 @@ const MasterNode: React.FC<MasterNodeProps> = ({
   selected = false, 
   handleNodeDown, 
   updateNodePlace, 
-  neighbors, 
   handleMouseDownOutput, 
   handleMouseEnterInput, 
-  dragAndDrop = false 
+  dragAndDrop = false,
+  type,
 }) => {
 
   const [positionNode, setPositionNode] = useState({ xPos: x, yPos: y });
@@ -55,12 +57,38 @@ const MasterNode: React.FC<MasterNodeProps> = ({
     event.preventDefault();
   };
 
+  const handleUpload = async (uploadFile: File | null) => {
+    if (!uploadFile) {
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", uploadFile);
+
+    try {
+      const response = await fetch("http://localhost:3000/upload-csv", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log("Uploaded CSV content:", result);
+      } else {
+      }
+    } catch (error) {
+      console.error("Error uploading file:", error);
+    }
+  };
+
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     if (!dragAndDrop) return;
     event.preventDefault();
     const file = event.dataTransfer.files[0];
     if (file) {
+      console.log(file)
       setFileName(file.name);
+      handleUpload(file);
     }
   };
 
@@ -89,12 +117,16 @@ const MasterNode: React.FC<MasterNodeProps> = ({
   ));
 
   const handleMouseDown = (event: React.MouseEvent) => {
+    if (
+      (event.target as HTMLElement).tagName === "BUTTON" ||
+      (event.target as HTMLElement).classList.contains("csv-download")
+    ) {
+      return; // Do nothing, let the button handle the event
+    }
     if (event.button !== 0) return;
-
     isDragging.current = true;
     stepPosition.current.XPos = event.clientX;
     stepPosition.current.YPos = event.clientY;
-    event.stopPropagation();
     handleNodeDown(id, event);
     setHide(true); // Hide the node when dragging
   };
@@ -137,33 +169,67 @@ const MasterNode: React.FC<MasterNodeProps> = ({
 
   return (
     <div>
-      <Ghost visible={hide} xPos={positionNode.xPos} yPos={positionNode.yPos} />
-      <div 
-        className={`master-node ${selected ? 'selected' : ''} ${hide ? 'hidden' : ''}`}
-        style={{ transform: `translate(${positionNode.xPos}px, ${positionNode.yPos}px)` }}
-        onMouseDown={handleMouseDown} 
-        onDragOver={handleDragOver}
-        onDrop={handleDrop}
-      >
-        {dragAndDrop ? (
-          <>
-            <div className="inputsWrapper">{inputs}</div>
-            <div className="outputsWrapper">{outputs}</div>
-            <div className="drag-area">
-              {fileName ? (
-                <p>{fileName}</p>
-              ) : (
-                <p>Drag and drop a file here</p>
-              )}
-            </div>
-          </>
-          
-        ) : (
-          <>
-            <div className="inputsWrapper">{inputs}</div>
-            <div className="outputsWrapper">{outputs}</div>
-          </>
-        )}
+      <Ghost 
+        visible={hide} 
+        xPos={positionNode.xPos} 
+        yPos={positionNode.yPos} 
+        content={
+          <div className={`master-node ${selected ? 'selected' : ''}`}>
+            {dragAndDrop ? (
+              <>
+                <div className="inputsWrapper">{inputs}</div>
+                <div className="outputsWrapper">{outputs}</div>
+                <div className="drag-area">
+                  {fileName ? <p>{fileName}</p> : <p>Drag and drop a file here</p>}
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="inputsWrapper">{inputs}</div>
+                <div className="outputsWrapper">{outputs}</div>
+              </>
+            )}
+          </div>
+        }
+      />
+      <div
+      className={`master-node ${selected ? 'selected' : ''} ${hide ? 'hidden' : ''}`}
+      style={{ transform: `translate(${positionNode.xPos}px, ${positionNode.yPos}px)` }}
+      onMouseDown={handleMouseDown}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+    >
+      {type === 'data-cleaning-block-remove-null' ? (
+        <>
+          <div className="inputsWrapper">{inputs}</div>
+          <div className="outputsWrapper">{outputs}</div>
+          <CleanNaBlock />
+        </>
+      ) : type === 'data-block-csv' ? (
+        <>
+          <div className="inputsWrapper">{inputs}</div>
+          <div className="outputsWrapper">{outputs}</div>
+          <div className="drag-area">
+            {fileName ? <p>{fileName}</p> : <p>Drag and drop a file here</p>}
+          </div>
+        </>
+      ) : type === 'output-to-csv' ? (
+        <>
+          <div className="inputsWrapper">{inputs}</div>
+          <div className="outputsWrapper">{outputs}</div>
+          <div
+            className="csv-download"
+            onClick={(e) => e?.stopPropagation()} // Prevent bubbling to parent
+          >
+            <OutputToCsv csvData="col1,col2\nvalue1,value2" fileName='test'/>
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="inputsWrapper">{inputs}</div>
+          <div className="outputsWrapper">{outputs}</div>
+        </>
+      )}
       </div>
     </div>
   );
